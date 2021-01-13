@@ -7,5 +7,18 @@ Vue.config.productionTip = false
 
 new Vue({
   router,
+  data: {
+    playMusic: {
+      musicID: 0,
+      isPlay: false,
+      currentIndex: -1,
+      isShow: false,
+      flag: false,
+      isShowPlayPage: false,
+      musicList: [],
+      comments: [],
+      hotComments: []
+    }
+  },
   render: h => h(App)
 }).$mount('#app')

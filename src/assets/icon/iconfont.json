@@ -1,0 +1,58 @@
+{
+  "id": "2321582",
+  "name": "网抑云",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "14099544",
+      "name": "下一首",
+      "font_class": "xiayishou",
+      "unicode": "e625",
+      "unicode_decimal": 58917
+    },
+    {
+      "icon_id": "19365787",
+      "name": "下一首",
+      "font_class": "shangyishou",
+      "unicode": "e751",
+      "unicode_decimal": 59217
+    },
+    {
+      "icon_id": "18247046",
+      "name": "暂停 停止",
+      "font_class": "zantingtingzhi",
+      "unicode": "e692",
+      "unicode_decimal": 59026
+    },
+    {
+      "icon_id": "1089811",
+      "name": "叉",
+      "font_class": "cha",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
+    },
+    {
+      "icon_id": "10458327",
+      "name": "三角形",
+      "font_class": "sanjiaoxing",
+      "unicode": "e750",
+      "unicode_decimal": 59216
+    },
+    {
+      "icon_id": "12290296",
+      "name": "等于",
+      "font_class": "dengyu-",
+      "unicode": "e670",
+      "unicode_decimal": 58992
+    },
+    {
+      "icon_id": "18921142",
+      "name": "网易云音乐",
+      "font_class": "wangyiyunyinle1",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    }
+  ]
+}

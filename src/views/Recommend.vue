@@ -2,10 +2,14 @@
   <div class="recommend">
     <Title>推荐歌单</Title>
     <ul class="recommendList">
+      <!-- 传变量的时候，只有第一种是正确的，后两种都是错误的 -->
+      <!-- :to="{ path: '/recommendContent/' + val.id }" -->
+      <!-- to="'/recommendContent/'+val.id" -->
+      <!-- to="`/recommendContent${val.id}`" -->
       <router-link
-        to="/"
         v-for="val in musicRecommendList"
         :key="val.id"
+        :to="{ path: '/recommendContent/' + val.id }"
         tag="li"
       >
         <div>
@@ -15,6 +19,7 @@
         <p>{{ val.name }}</p>
       </router-link>
     </ul>
+    <Loading v-if="musicRecommendList <= 0"></Loading>
     <Title>最新音乐</Title>
     <MusicItem :newMusicList="newMusicList"></MusicItem>
   </div>
@@ -23,6 +28,7 @@
 <script>
 import Title from '../components/Title'
 import MusicItem from '../components/MusicItem'
+import Loading from '../components/Loading'
 export default {
   name: 'Recommend',
   data () {
@@ -33,12 +39,18 @@ export default {
   },
   components: {
     Title,
-    MusicItem
+    MusicItem,
+    Loading
   },
   filters: {
     formatNum (value) {
       return (value / 10000).toFixed(1) + '万';
     }
+  },
+  methods: {
+    // playMusic (id) {
+    //   this.$emit('playMusic', id);
+    // }
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
@@ -47,10 +59,15 @@ export default {
           // console.log(data);
           vm.musicRecommendList = data.data.result;
         })
+        .catch(() => {
+        })
       vm.$http.get('/personalized/newsong')
         .then(data => {
           // console.log(data);
           vm.newMusicList = data.data.result;
+          vm.$root.playMusic.musicList = data.data.result;
+        })
+        .catch(() => {
         })
     })
   }
@@ -66,8 +83,14 @@ export default {
     justify-content: space-between;
     li {
       width: 33%;
+      &:nth-of-type(n + 4) {
+        margin-top: 12px;
+      }
       div {
         position: relative;
+        img {
+          border-radius: 12px;
+        }
         span {
           position: absolute;
           top: 2px;
@@ -81,7 +104,7 @@ export default {
       p {
         font-size: 13px;
         text-align: left;
-        padding: 0 5px 12px;
+        padding: 0 5px;
         font-family: "黑体";
         font-weight: 500;
         overflow: hidden;

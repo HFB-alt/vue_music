@@ -2,8 +2,8 @@
   <div class="topNav">
     <ul>
       <li><router-link tag="a" to="/">推荐音乐</router-link></li>
-      <li><router-link tag="a" to="/hotMusic">热歌榜</router-link></li>
-      <li><router-link tag="a" to="search">搜索</router-link></li>
+      <li><router-link tag="a" to="/hotMusic/1">热歌榜</router-link></li>
+      <li><router-link tag="a" to="/search">搜索</router-link></li>
     </ul>
   </div>
 </template>

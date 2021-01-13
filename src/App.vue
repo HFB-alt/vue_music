@@ -1,18 +1,24 @@
 <template>
   <div id="app">
-    <TopNav></TopNav>
-    <keep-alive>
-      <router-view></router-view>
-    </keep-alive>
+    <TopNav v-show="$route.meta.isShowNav"></TopNav>
+    <div style="padding-bottom: 50px">
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
+    </div>
+    <PlayMusic :musicID="$root.playMusic.musicID"></PlayMusic>
   </div>
 </template>
 
 <script>
+import PlayMusic from './components/PlayMusic'
 import TopNav from './components/TopNav'
 export default {
+  name: 'App',
   components: {
+    PlayMusic,
     TopNav
-  }
+  },
 }
 </script>
 

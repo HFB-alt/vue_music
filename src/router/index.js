@@ -8,12 +8,32 @@ const routes = [
   {
     path: '/',
     name: 'Recommend',
-    component: Recommend
+    component: Recommend,
+    meta: { isShowNav: true }
   },
   {
     path: '/hotMusic',
     name: 'HotMusic',
-    component: () => import('../views/HotMusic.vue')
+    component: () => import('../views/HotMusic.vue'),
+    meta: { isShowNav: true }
+  },
+  {
+    path: '/hotMusic/:num',
+    name: 'HotMusicItem',
+    component: () => import('../views/HotMusic.vue'),
+    meta: { isShowNav: true }
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: () => import('../views/Search'),
+    meta: { isShowNav: true }
+  },
+  {
+    path: '/recommendContent/:id',
+    name: 'RecommendContent',
+    props: true,
+    component: () => import('../views/RecommendContent'),
   }
 ]
 
