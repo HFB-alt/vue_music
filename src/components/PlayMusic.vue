@@ -115,6 +115,7 @@ export default {
       },
       lrcArr: [],
       index: 0,
+      timer: null
     }
   },
   components: {
@@ -129,8 +130,11 @@ export default {
         });
       this.$http.get('/lyric?id=' + val)
         .then((data) => {
+          console.log(data);
           let detailStr = data.data.lrc.lyric;
           let detailArr = detailStr.split(/\n/);
+          console.log(detailArr);
+          detailArr.pop();
           let reg = /\[(\d+):(\d+\.\d+)\](.+)/;
           this.lrcArr = detailArr.map(v => {
             reg.test(v);
@@ -145,8 +149,10 @@ export default {
     state (val) {
       if (val == true) {
         this.$refs.rotateImg.style.animationPlayState = "running";
+        this.$refs.musicplayer.play();
       } else {
         this.$refs.rotateImg.style.animationPlayState = "paused";
+        this.$refs.musicplayer.pause();
       }
     }
   },
@@ -197,12 +203,51 @@ export default {
       let percent = currentTime / duration;
       for (let i = 0; i < this.lrcArr.length; i++) {
         //time报错修改的部分
+        // console.log('+++++++++++', this.lrcArr[i].time);
         if (this.lrcArr[i].time) {
           let lrcTime = this.lrcArr[i].time;
-          if (currentTime >= lrcTime && currentTime < this.lrcArr[i + 1].time) {
-            this.index = i;
-            break;
+          // if (lrcTime == this.lrcArr[this.lrcArr.length - 1].time) {
+          // this.index = i;
+          // this.$root.playMusic.musicList.forEach((v, i) => {
+          //   if (v.id == this.$root.playMusic.musicID) {
+          //     this.$root.playMusic.musicID = this.$root.playMusic.musicList[i + 1].id;
+          //   }
+          // })
+          // break;
+          // } else 
+          // if (typeof this.lrcArr[i + 1].time != 'undefined') {
+          if (lrcTime < this.lrcArr[this.lrcArr.length - 1].time) {
+            if (currentTime >= lrcTime && currentTime < this.lrcArr[i + 1].time) {
+              this.index = i;
+              break;
+            } else if (currentTime == duration) {
+              let list = this.$root.playMusic.musicList;
+              clearTimeout(this.timer);
+              for (let j = 0; j < list.length; j++) {
+                console.log(list[j].id);
+                console.log(this.$root.playMusic.musicID);
+                if (list[j].id == this.$root.playMusic.musicID) {
+                  this.timer = setTimeout(function () {
+                    this.$root.playMusic.musicID = list[j + 1].id;
+                    console.log('123123', j);
+                  }.bind(this), 2000);
+                  break;
+                }
+              }
+            }
           }
+          //  else {
+          //   let list = this.$root.playMusic.musicList;
+          //   clearTimeout(this.timer);
+          //   for (let j = 0; j < list.length; j++) {
+          //     if (list[j].id == this.$root.playMusic.musicID) {
+          //       this.timer = setTimeout(function () {
+          //         this.$root.playMusic.musicID = list[j + 1].id;
+          //       }.bind(this), 4000);
+          //       break;
+          //     }
+          //   }
+          // }
         }
       }
 
@@ -212,18 +257,22 @@ export default {
       let canvas = this.$refs.canvas;
       let ctx = canvas.getContext('2d');
       ctx.beginPath();
-      ctx.StrokeStyle = 'gray';
+      ctx.strokeStyle = 'black';
       ctx.arc(15, 15, 13, -(Math.PI / 2), Math.PI * 1.5);
       ctx.stroke();
+      ctx.closePath();
 
       ctx.beginPath();
-      ctx.StrokeStyle = 'white';
-      ctx.arc(15, 15, 13, -(Math.PI / 2), Math.PI * 2 * percent);
+      ctx.strokeStyle = 'white';
+      let p = percent - 0.25;
+      ctx.arc(15, 15, 13, -(Math.PI / 2), Math.PI * 2 * p);
       ctx.stroke();
       ctx.closePath();
     },
     showPlayer () {
-      this.$root.playMusic.isShowPlayPage = true;
+      if (this.$root.playMusic.flag) {
+        this.$root.playMusic.isShowPlayPage = true;
+      }
     },
     close () {
       this.$root.playMusic.isShowPlayPage = false;
@@ -268,6 +317,7 @@ export default {
       height: 50px;
       padding: 0 8px;
       background-color: #252525;
+      // background-color: rgba(0, 0, 0, 0.3);
       i {
         display: inline-block;
         &:first-of-type {

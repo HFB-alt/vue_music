@@ -4,11 +4,7 @@
       <li class="search" v-show="searchVal != searchMusicFirstName">
         搜索“{{ searchVal }}”
       </li>
-      <li
-        v-for="item in result"
-        :key="item.id"
-        @click="$emit('searchResult', item.name)"
-      >
+      <li v-for="item in result" :key="item.id" @click="searchIt(item)">
         <i></i>
         <span>{{ item.name }}-{{ item | filterItem }}</span>
       </li>
@@ -34,6 +30,30 @@ export default {
     },
     searchMusicFirstName: {
       type: String
+    }
+  },
+  data () {
+    return {
+      history: null,
+      historyRecord: [],
+    }
+  },
+  methods: {
+    searchIt (val) {
+      // this.history = localStorage.getItem('record');
+      // if (this.history == null) {
+      //   this.history = [];
+      //   this.history.push(this.searchVal);
+      //   localStorage.setItem('record', (JSON.stringify(this.history)));
+      //   this.historyRecord = this.history;
+      // } else {
+      //   let mid = JSON.parse(this.history);
+      //   mid.push(this.searchVal);
+      //   // JSON.parse(this.history).push(this.searchVal);
+      //   localStorage.setItem('record', JSON.stringify(mid));
+      //   this.historyRecord = mid;
+      // }
+      this.$emit('searchResult', val.name);
     }
   },
   filters: {

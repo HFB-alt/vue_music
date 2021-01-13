@@ -65,7 +65,10 @@ export default {
         })
     },
     showPlayer () {
-      this.$root.playMusic.isShowPlayPage = true;
+      if (this.$root.playMusic.flag) {
+        this.$root.playMusic.isShowPlayPage = true;
+        this.$root.playMusic.musicID = this.item.id;
+      }
     }
   },
   filters: {

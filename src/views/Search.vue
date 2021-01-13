@@ -1,6 +1,6 @@
 <template>
   <div class="search">
-    <form @submit.stop.prevent="searchList(keywords)">
+    <form @submit.stop.prevent="searchList(searchVal)">
       <div class="searchBox">
         <i></i>
         <input
@@ -28,6 +28,16 @@
         </ul>
       </div>
     </div>
+    <ul class="record">
+      <Record
+        v-show="recordShow"
+        v-for="(item, index) in historyRecord"
+        :key="index"
+        :item="item"
+        :index="index"
+        @localStorageDataChange="localStorageDataChange"
+      ></Record>
+    </ul>
     <SearchResult
       v-show="!loadingShow && searchResultShow"
       :result="result"
@@ -49,12 +59,14 @@
 import SearchResult from '../components/SearchResult'
 import Loading from '../components/Loading'
 import Result from '../components/Result'
+import Record from '../components/Record'
 export default {
   name: 'Search',
   components: {
     SearchResult,
     Loading,
-    Result
+    Result,
+    Record
   },
   data () {
     return {
@@ -67,26 +79,59 @@ export default {
       searchMusicList: [],
       searchMusicFirstName: '',
       hotSearchResult: [],
-      hotSearchShow: true
+      hotSearchShow: true,
+      historyRecord: [],
+      history: null,
+      recordShow: true
+    }
+  },
+  mounted () {
+    this.history = localStorage.getItem('record');
+    if (this.history != null) {
+      this.historyRecord = JSON.parse(this.history);
     }
   },
   methods: {
     searching () {
       if (this.searchVal == '') {
         this.isShow = false;
+        this.recordShow = true;
+        this.searchResultShow = false;
       } else {
         this.isShow = true;
+        this.recordShow = false;
+        this.searchResultShow = true;
       }
     },
     close () {
       this.searchVal = '';
       this.resultShow = false;
+      this.recordShow = true;
+      this.searchResultShow = false;
     },
     searchList (val) {
       // this.searchVal = '';
+      if (this.searchVal == '') {
+        this.recordShow = true;
+      } else {
+        this.recordShow = false;
+      }
       this.loadingShow = true;
       this.searchResultShow = true;
       this.resultShow = false;
+      // JSON.stringify this.historyRecord.push(val);
+      this.history = localStorage.getItem('record');
+      if (this.history == null) {
+        this.history = [];
+        this.history.push(val);
+        localStorage.setItem('record', JSON.stringify(this.history));
+        this.historyRecord = this.history;
+      } else {
+        let middle = JSON.parse(this.history);
+        middle.push(val)
+        localStorage.setItem('record', JSON.stringify(middle));
+        this.historyRecord = middle;
+      }
       this.$http.get('/search?keywords=' + val)
         .then(data => {
           console.log(data);
@@ -123,6 +168,26 @@ export default {
     searchCurrent (e) {
       this.searchVal = e.target.innerHTML;
       this.hotSearchShow = false;
+      this.recordShow = false;
+      this.isShow = true;
+      // this.history = localStorage.getItem('record');
+      // if (this.history == null) {
+      //   this.history = [];
+      //   this.history.push(this.searchVal);
+      //   localStorage.setItem('record', (JSON.stringify(this.history)));
+      //   this.historyRecord = this.history;
+      // } else {
+      //   let mid = JSON.parse(this.history);
+      //   mid.push(this.searchVal);
+      //   // JSON.parse(this.history).push(this.searchVal);
+      //   localStorage.setItem('record', JSON.stringify(mid));
+      //   this.historyRecord = mid;
+      // }
+    },
+    localStorageDataChange (val) {
+      // console.log(val);
+      // console.log(1111);
+      this.historyRecord = val;
     }
   },
   watch: {
@@ -236,6 +301,9 @@ export default {
         }
       }
     }
+  }
+  .record {
+    padding: 0px 8px;
   }
 }
 </style>
