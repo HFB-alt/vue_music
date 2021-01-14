@@ -52,6 +52,14 @@ export default {
     //   this.$emit('playMusic', id);
     // }
   },
+  // computed: {
+  //   isReq () {
+  //     if (!this.$root.playMusic.isRequest) {
+  //       this.$root.playMusic.isRequest = true;
+  //     }
+  //     return this.$root.playMusic.isRequest;
+  //   }
+  // },
   beforeRouteEnter (to, from, next) {
     next(vm => {
       vm.$http.get('/personalized?limit=6')

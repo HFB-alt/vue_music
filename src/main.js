@@ -17,7 +17,7 @@ new Vue({
       isShowPlayPage: false,
       musicList: [],
       comments: [],
-      hotComments: []
+      hotComments: [],
     }
   },
   render: h => h(App)

@@ -47,8 +47,8 @@ export default {
     }
   },
   created () {
-    console.log(this.item);
-    console.log('0000000', this.num);
+    // console.log(this.item);
+    // console.log('0000000', this.num);
   },
   methods: {
     playMusic () {
@@ -59,7 +59,7 @@ export default {
       this.$root.playMusic.flag = true;
       this.$http.get(`/comment/music?id=${this.$root.playMusic.musicID}&limit=10`)
         .then(data => {
-          console.log(data);
+          // console.log(data);
           this.$root.playMusic.comments = data.data.comments;
           this.$root.playMusic.hotComments = data.data.hotComments;
         })

@@ -13,7 +13,7 @@
       </ListItem>
     </ul>
     <p ref="scrllBar"><Loading v-show="searching" /></p>
-    <p v-show="noMore">没有更多内容了！</p>
+    <p v-show="!searching && noMore">没有更多内容了！</p>
   </div>
 </template>
 
@@ -39,7 +39,8 @@ export default {
       songsList: [],
       searching: false,
       num: 0,
-      noMore: false
+      noMore: false,
+      isRequest: true
     }
   },
   components: {
@@ -48,6 +49,7 @@ export default {
     Loading
   },
   created () {
+    // this.isRequest = true;
     window.addEventListener('scroll', this.getMore);
   },
   destroyed () {
@@ -66,65 +68,82 @@ export default {
     getData (vm) {
       let musicIds = [];
       let musicIdsStr = [];
-      vm.searching = false;
-      vm.$http.get('/playlist/detail?id=' + vm.id)
-        .then(data => {
-          console.log(data);
-          vm.detailData = {
-            coverImgUrl: data.data.playlist.coverImgUrl,
-            name: data.data.playlist.name,
-            creator: {
-              avatarUrl: data.data.playlist.creator.avatarUrl,
-              nickname: data.data.playlist.creator.nickname
-            },
-            playCount: data.data.playlist.playCount,
-            trackIds: data.data.playlist.trackIds
-          }
-          console.log('aaaaa', vm.detailData);
-          musicIds = data.data.playlist.trackIds.slice(vm.num * 20, (vm.num + 1) * 20);
-          if (musicIds.length >= 20) {
-            musicIds.forEach(v => {
-              musicIdsStr.push(v.id);
-            })
-            musicIdsStr = musicIdsStr.join(',');
-            vm.noMore = false;
-          } else {
-            vm.noMore = true;
-          }
-        })
-        .then(() => {
-          if (musicIds >= 20) {
-            vm.$http.get('/song/detail?ids=' + musicIdsStr)
-              .then(data => {
-                console.log(data);
-                for (var i = 0; i < data.data.songs.length; i++) {
-                  vm.songsList.push({
-                    name: data.data.songs[i].name,
-                    id: data.data.songs[i].id,
-                    song: {
-                      privilege: {
-                        maxbr: 0
-                      },
-                      artists: data.data.songs[i].ar,
-                      album: data.data.songs[i].al
-                    }
-                  });
-                }
-                vm.$root.playMusic.musicList = vm.songsList;
+      // console.log(vm.isRequest);
+      if (vm.isRequest) {
+        vm.searching = true;
+
+        vm.$http.get('/playlist/detail?id=' + vm.id)
+          .then(data => {
+            // console.log(data);
+            vm.detailData = {
+              coverImgUrl: data.data.playlist.coverImgUrl,
+              name: data.data.playlist.name,
+              creator: {
+                avatarUrl: data.data.playlist.creator.avatarUrl,
+                nickname: data.data.playlist.creator.nickname
+              },
+              playCount: data.data.playlist.playCount,
+              trackIds: data.data.playlist.trackIds
+            }
+            // console.log('aaaaa', vm.detailData);
+            musicIds = data.data.playlist.trackIds.slice(vm.num * 20, (vm.num + 1) * 20);
+            // console.log(musicIds.length);
+            if (musicIds.length >= 20) {
+              musicIds.forEach(v => {
+                musicIdsStr.push(v.id);
               })
-          }
-        })
-        .finally(() => {
-          vm.searching = true;
-        })
+              musicIdsStr = musicIdsStr.join(',');
+              vm.noMore = false;
+              vm.isRequest = true;
+            } else {
+              vm.noMore = true;
+              vm.isRequest = false;
+            }
+          })
+          .then(() => {
+            if (musicIds.length >= 20) {
+              vm.$http.get('/song/detail?ids=' + musicIdsStr)
+                .then(data => {
+                  // console.log(data);
+                  for (var i = 0; i < data.data.songs.length; i++) {
+                    vm.songsList.push({
+                      name: data.data.songs[i].name,
+                      id: data.data.songs[i].id,
+                      song: {
+                        privilege: {
+                          maxbr: 0
+                        },
+                        artists: data.data.songs[i].ar,
+                        album: data.data.songs[i].al
+                      }
+                    });
+                  }
+                  vm.$root.playMusic.musicList = vm.songsList;
+                  // console.log('song', vm.songsList);
+                })
+            } else {
+              vm.searching = false;
+            }
+          })
+          .finally(() => {
+            // vm.isRequest = false;
+            vm.searching = false;
+          })
+      }
     }
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
+      vm.isRequest = true;
+      vm.num = 0;
       vm.songsList = [];
       vm.getData(vm);
     })
-  }
+  },
+  // beforeRouteUpdate () {
+  //   console.log('update');
+  //   this.isRequest = true;
+  // }
 }
 </script>
 

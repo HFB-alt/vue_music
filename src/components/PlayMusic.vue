@@ -56,27 +56,30 @@
         <div class="box">
           <h1>{{ song.name }}</h1>
           <h3>{{ song.ar | formatAuthor }}</h3>
-          <div class="lrc">
-            <div>
-              <ul
-                :style="{
-                  transform: `translateY(-${index * 25}px)`,
-                }"
+          <div class="lrc" ref="moveUl" @scroll="scrollMove">
+            <!-- @touchmove="scrollDirection" -->
+            <!-- @touchstart="lyricScroll" -->
+            <!-- <div> -->
+            <ul>
+              <!-- :style="{
+                  top: `-${index * 25}px`,
+                }" -->
+              <!-- transform: `translateY(-${index * 25}px)`, -->
+              <li
+                v-for="(item, i) in lrcArr"
+                :key="i"
+                :class="{ active: i == index }"
+                @click="toggleIt(i)"
               >
-                <li
-                  v-for="(item, i) in lrcArr"
-                  :key="i"
-                  :class="{ active: i == index }"
-                >
-                  {{ item.lyric }}
-                </li>
-              </ul>
-            </div>
+                {{ item.lyric }}
+              </li>
+            </ul>
+            <!-- </div> -->
           </div>
         </div>
 
         <div class="comments">
-          <h3 class="hotComments">精彩评论</h3>
+          <h3 class="hotComments" v-show="hotComments.length > 0">精彩评论</h3>
           <ul>
             <Comments
               v-for="item in hotComments"
@@ -84,7 +87,7 @@
               :item="item"
             ></Comments>
           </ul>
-          <h3 class="newComments">最新评论</h3>
+          <h3 class="newComments" v-show="comments.length > 0">最新评论</h3>
           <ul>
             <Comments
               v-for="item in comments"
@@ -115,7 +118,13 @@ export default {
       },
       lrcArr: [],
       index: 0,
-      timer: null
+      timer: null,
+      // count: 0
+      // start: 0,
+      // end: 0,
+      flag: true,
+      timer1: null,
+      timer2: null
     }
   },
   components: {
@@ -125,15 +134,15 @@ export default {
     musicID (val) {
       this.$http.get('/song/detail?ids=' + val)
         .then(data => {
-          console.log(data);
+          // console.log(data);
           this.song = data.data.songs[0];
         });
       this.$http.get('/lyric?id=' + val)
         .then((data) => {
-          console.log(data);
+          // console.log(data);
           let detailStr = data.data.lrc.lyric;
           let detailArr = detailStr.split(/\n/);
-          console.log(detailArr);
+          // console.log(detailArr);
           detailArr.pop();
           let reg = /\[(\d+):(\d+\.\d+)\](.+)/;
           this.lrcArr = detailArr.map(v => {
@@ -143,7 +152,7 @@ export default {
               lyric: RegExp.$3
             }
           })
-          console.log('hhhhh', this.lrcArr);
+          // console.log('hhhhh', this.lrcArr);
         })
     },
     state (val) {
@@ -201,6 +210,8 @@ export default {
       let currentTime = e.target.currentTime;
       let duration = e.target.duration;
       let percent = currentTime / duration;
+      clearTimeout(this.timer2);
+      this.timer2 = null;
       for (let i = 0; i < this.lrcArr.length; i++) {
         //time报错修改的部分
         // console.log('+++++++++++', this.lrcArr[i].time);
@@ -218,23 +229,40 @@ export default {
           // if (typeof this.lrcArr[i + 1].time != 'undefined') {
           if (lrcTime < this.lrcArr[this.lrcArr.length - 1].time) {
             if (currentTime >= lrcTime && currentTime < this.lrcArr[i + 1].time) {
+              // if (this.top == 0) {
+              // setTimeout(function () {
               this.index = i;
+              // this.top = 0;
+              // }, 2000);
+              // console.log(this.index);
+              if (this.index > 3 && this.index < this.lrcArr.length - 12 && this.flag) {
+                // this.$refs.ul.style.transform = `translateY(-${(this.currentIndex - 3) * 30}px)`;
+                // this.$refs.scroll.scrollTop = (this.currentIndex - 3) * 30;
+                this.$refs.moveUl.scrollTop = (this.index - 3) * 25;
+              }
               break;
+              // }
             } else if (currentTime == duration) {
               let list = this.$root.playMusic.musicList;
               clearTimeout(this.timer);
               for (let j = 0; j < list.length; j++) {
-                console.log(list[j].id);
-                console.log(this.$root.playMusic.musicID);
+                // console.log(list[j].id);
+                // console.log(this.$root.playMusic.musicID);
                 if (list[j].id == this.$root.playMusic.musicID) {
                   this.timer = setTimeout(function () {
                     this.$root.playMusic.musicID = list[j + 1].id;
-                    console.log('123123', j);
+                    // console.log('123123', j);
                   }.bind(this), 2000);
                   break;
                 }
               }
             }
+          }
+          if (this.timer2 == null && this.index == this.lrcArr.length - 2) {
+            this.timer2 = setTimeout(() => {
+              this.index = 0;
+              this.$refs.moveUl.scrollTop = 0;
+            }, 500);
           }
           //  else {
           //   let list = this.$root.playMusic.musicList;
@@ -282,7 +310,7 @@ export default {
         if (v.id == this.musicID) {
           // console.log(111);
           this.$root.playMusic.musicID = this.$root.playMusic.musicList[i + 1].id;
-          console.log(i);
+          // console.log(i);
         }
       })
     },
@@ -294,6 +322,39 @@ export default {
         }
       })
     },
+    // lyricScroll () {
+    // this.start = e.changedTouches[0].pageY;
+    // },
+    // scrollDirection () {
+    // this.end = e.changedTouches[0].pageY;
+    // let move = this.end - this.start;
+    // console.log(-this.index * 25 + move);
+    // let m = -this.index * 25 + move;
+    // this.$refs.moveUl.style.transform = `translateY(${m}px)`;
+    // },
+    scrollMove () {
+      // this.top = e.target.scrollTop;
+      // console.log(top);
+      // if (this.top == 0) {
+      //   this.top = -1;
+      //   this.index -= 3;
+      // }
+      this.flag = false;
+      clearTimeout(this.timer1);
+      this.timer1 = null;
+      if (this.timer1 == null) {
+        this.timer1 = setTimeout(() => {
+          this.flag = true;
+        }, 1000);
+      }
+    },
+    toggleIt (i) {
+      // console.log('111122333444');
+      let timeVal = this.lrcArr[i].time;
+      // console.log(timeVal);
+      this.$refs.musicplayer.currentTime = timeVal;
+      // this.currentIndex = index;
+    }
   },
 
 }
@@ -344,6 +405,11 @@ export default {
           flex: 1;
           font-size: 16px;
           color: white;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
         }
         &:last-of-type {
           width: 30px;
@@ -456,26 +522,29 @@ export default {
         .lrc {
           position: relative;
           height: 31vh;
-          overflow: hidden;
-          div {
-            position: absolute;
-            top: 8vh;
-            width: 100%;
-            ul {
-              height: 20vh;
-              li {
-                line-height: 25px;
-                font-size: 16px;
-                color: #424140;
-                font-weight: bolder;
-                text-shadow: 1px 1px 3px #fff;
-                &.active {
-                  font-size: 20px;
-                  color: #ffffff;
-                }
+          overflow-y: scroll;
+          // div {
+          //   position: absolute;
+          //   top: 8vh;
+          //   width: 100%;
+          ul {
+            // height: 20vh;
+            position: relative;
+            // overflow-y: scroll;
+            // top: 0px;
+            li {
+              line-height: 25px;
+              font-size: 16px;
+              color: #424140;
+              font-weight: bolder;
+              text-shadow: 1px 1px 3px #fff;
+              &.active {
+                font-size: 20px;
+                color: #ffffff;
               }
             }
           }
+          // }
         }
       }
       .comments {

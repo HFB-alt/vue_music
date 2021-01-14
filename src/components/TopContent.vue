@@ -33,7 +33,7 @@ export default {
   },
   mounted () {
     // console.log('ppppppp', this.detailData);
-    console.log('llllllll');
+    // console.log('llllllll');
   },
   filters: {
     formatCount (val) {

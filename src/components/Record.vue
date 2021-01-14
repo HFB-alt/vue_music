@@ -20,7 +20,7 @@ export default {
   },
   methods: {
     deleteItem () {
-      console.log(111);
+      // console.log(111);
       // console.log(this.index);
       let records = JSON.parse(localStorage.getItem('record'));
       records.splice(this.index, 1);

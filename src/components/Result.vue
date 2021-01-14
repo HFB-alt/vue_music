@@ -56,13 +56,13 @@ export default {
   watch: {
     keywords (val) {
       if (this.keywords == this.searchMusicFirstName) {
-        console.log(this.multimatchResult);
+        // console.log(this.multimatchResult);
         this.multimatchResult = [];
-        console.log(this.multimatchResult);
+        // console.log(this.multimatchResult);
         this.aliasStr = [];
         this.$http.get('/search/multimatch?keywords=' + val)
           .then(data => {
-            console.log('result1111==>', data);
+            // console.log('result1111==>', data);
             // this.multimatchResult = data.data.result;
             let resultData = data.data.result.orders.reduce((prev, current) => {
               if (current != 'new_mlog' && current != 'mv') {
@@ -71,23 +71,23 @@ export default {
               return prev;
             }, []);
             this.multimatchResult = resultData;
-            console.log(Array.isArray(this.multimatchResult));
-            console.log(this.multimatchResult);
+            // console.log(Array.isArray(this.multimatchResult));
+            // console.log(this.multimatchResult);
             if (this.multimatchResult.length != 0) {
               this.aliasStr = this.multimatchResult[0].alias;
             }
             // console.log(1111222221);
-            console.log('kkkkkk', this.multimatchResult);
+            // console.log('kkkkkk', this.multimatchResult);
           })
       }
     }
   },
   filters: {
     formatAlias (val) {
-      console.log('val', val);
+      // console.log('val', val);
       let str = '';
       val.forEach(v => {
-        console.log(v);
+        // console.log(v);
         str = str + '/' + v;
       })
       return str.slice(1);

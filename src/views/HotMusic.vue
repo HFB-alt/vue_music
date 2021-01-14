@@ -56,13 +56,13 @@ export default {
       let musicIds = [];
       let musicIdsStr = [];
       vm.length = vm.hotMusicList.length;
-      console.log(vm.length);
+      // console.log(vm.length);
       // vm.num++;
       vm.$http.get('/top/list?idx=1')
         .then(data => {
           // vm.hotMusicList = data.data.list[3].tracks;
           // console.log(vm.hotMusicList);
-          console.log(data);
+          // console.log(data);
           vm.updateDate = data.data.playlist.updateTime;
           musicIds = data.data.playlist.trackIds.slice((vm.num - 1) * 20, vm.num * 20);
           musicIds.forEach(v => {
@@ -74,7 +74,7 @@ export default {
         .then(() => {
           vm.$http.get('/song/detail?ids=' + musicIdsStr)
             .then(data => {
-              console.log(data);
+              // console.log(data);
               // vm.hotMusicList = data.data.songs;
               for (var i = 0; i < data.data.songs.length; i++) {
                 vm.hotMusicList.push({

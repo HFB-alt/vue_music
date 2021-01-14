@@ -134,7 +134,7 @@ export default {
       }
       this.$http.get('/search?keywords=' + val)
         .then(data => {
-          console.log(data);
+          // console.log(data);
           if (data.data.code == 200) {
             this.searchMusicList = data.data.result.songs.map(resultData => {
               return {
@@ -160,9 +160,9 @@ export default {
           this.loadingShow = false;
           this.searchVal = this.searchMusicList[0].name;
           this.searchMusicFirstName = this.searchMusicList[0].name;
-          console.log(1111);
-          console.log(this.searchVal);
-          console.log(this.searchMusicFirstName);
+          // console.log(1111);
+          // console.log(this.searchVal);
+          // console.log(this.searchMusicFirstName);
         })
     },
     searchCurrent (e) {
@@ -233,7 +233,7 @@ export default {
     next(vm => {
       vm.$http.get('/search/hot')
         .then(data => {
-          console.log(data);
+          // console.log(data);
           vm.hotSearchResult = data.data.result.hots;
         })
     })
