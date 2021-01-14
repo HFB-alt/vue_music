@@ -22,9 +22,10 @@
 
     <ul>
       <ListItem
-        v-for="item in searchMusicList"
+        v-for="(item, index) in searchMusicList"
         :key="item.id"
         :item="item"
+        :num="index + 1"
       ></ListItem>
     </ul>
   </div>

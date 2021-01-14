@@ -2,7 +2,7 @@
   <li class="recordLi">
     <i></i>
     <div>
-      <span>{{ item }}</span>
+      <span @click="$emit('searchRecord', item)">{{ item }}</span>
       <i @click="deleteItem"></i>
     </div>
   </li>

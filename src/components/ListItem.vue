@@ -68,6 +68,9 @@ export default {
       if (this.$root.playMusic.flag) {
         this.$root.playMusic.isShowPlayPage = true;
         this.$root.playMusic.musicID = this.item.id;
+        this.$root.playMusic.currentIndex = this.num - 1;
+        this.$root.playMusic.isPlay = !this.$root.playMusic.isPlay;
+        this.$root.playMusic.isShow = !this.$root.playMusic.isShow;
       }
     }
   },

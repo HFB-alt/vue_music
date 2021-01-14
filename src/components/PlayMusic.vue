@@ -158,9 +158,11 @@ export default {
     state (val) {
       if (val == true) {
         this.$refs.rotateImg.style.animationPlayState = "running";
+        this.$refs.playingCD.style.animationPlayState = "running";
         this.$refs.musicplayer.play();
       } else {
         this.$refs.rotateImg.style.animationPlayState = "paused";
+        this.$refs.playingCD.style.animationPlayState = "paused";
         this.$refs.musicplayer.pause();
       }
     }

@@ -36,6 +36,7 @@
         :item="item"
         :index="index"
         @localStorageDataChange="localStorageDataChange"
+        @searchRecord="searchRecord"
       ></Record>
     </ul>
     <SearchResult
@@ -92,6 +93,12 @@ export default {
     }
   },
   methods: {
+    searchRecord (val) {
+      this.searchVal = val;
+      this.hotSearchShow = false;
+      this.recordShow = false;
+      this.isShow = true;
+    },
     searching () {
       if (this.searchVal == '') {
         this.isShow = false;
