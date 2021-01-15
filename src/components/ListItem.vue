@@ -69,8 +69,8 @@ export default {
         this.$root.playMusic.isShowPlayPage = true;
         this.$root.playMusic.musicID = this.item.id;
         this.$root.playMusic.currentIndex = this.num - 1;
-        this.$root.playMusic.isPlay = !this.$root.playMusic.isPlay;
-        this.$root.playMusic.isShow = !this.$root.playMusic.isShow;
+        this.$root.playMusic.isPlay = true;
+        this.$root.playMusic.isShow = true;
       }
     }
   },

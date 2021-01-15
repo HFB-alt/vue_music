@@ -1,5 +1,13 @@
 <template>
   <div class="recommend">
+    <!-- 轮播图 -->
+    <van-swipe :autoplay="4000">
+      <van-swipe-item v-for="(image, index) in bannerData" :key="index">
+        <img v-lazy="image.pic" />
+      </van-swipe-item>
+    </van-swipe>
+    <Loading v-if="bannerData <= 0"></Loading>
+
     <Title>推荐歌单</Title>
     <ul class="recommendList">
       <!-- 传变量的时候，只有第一种是正确的，后两种都是错误的 -->
@@ -29,18 +37,22 @@
 import Title from '../components/Title'
 import MusicItem from '../components/MusicItem'
 import Loading from '../components/Loading'
+import { Swipe, SwipeItem } from 'vant'
 export default {
   name: 'Recommend',
   data () {
     return {
       musicRecommendList: [],
-      newMusicList: []
+      newMusicList: [],
+      bannerData: []
     }
   },
   components: {
     Title,
     MusicItem,
-    Loading
+    Loading,
+    [Swipe.name]: Swipe,
+    [SwipeItem.name]: SwipeItem,
   },
   filters: {
     formatNum (value) {
@@ -77,6 +89,11 @@ export default {
         })
         .catch(() => {
         })
+      vm.$http.get('/banner?type=2')
+        .then(data => {
+          vm.bannerData = data.data.banners.slice(0, 5);
+          // console.log(vm.bannerData);
+        })
     })
   }
 }
@@ -84,7 +101,7 @@ export default {
 
 <style lang="less" scoped>
 .recommend {
-  margin-top: 58px;
+  margin-top: 44px;
   ul.recommendList {
     display: flex;
     flex-wrap: wrap;
